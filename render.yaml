@@ -33,7 +33,8 @@ services:
     name: defaultdb
     env: image
     plan: starter # Note: Private Services require a paid plan on Render
-    image: mysql:8.0
+    image:
+      url: mysql:8.0  # <--- Use 'url:' here
     envVars:
       - key: MYSQL_DATABASE
         value: defaultdb
