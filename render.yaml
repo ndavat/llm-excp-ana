@@ -7,7 +7,7 @@ services:
       npm install
       cd frontend && npm install && npm run build
       cd ../backend && npm install && npm run build
-    startCommand: export DATABASE_URL=mysql://root:$MYSQL_ROOT_PASSWORD@exception-db:3306/exception_db && cd backend && npm start
+    startCommand: export DATABASE_URL=mysql://avnadmin:MYSQL_ROOT_PASSWORD@mysql-242268f-ndavat-051c.a.aivencloud.com:18638/defaultdb?ssl-mode=REQUIRED && cd backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -26,12 +26,12 @@ services:
         value: https://openrouter.ai/api/v1
 
   - type: pserv
-    name: exception-db
-    env: docker
+    name: defaultdb
+    env: image
     plan: starter
     image: mysql:8.0
     envVars:
       - key: MYSQL_DATABASE
-        value: exception_db
+        value: defaultdb
       - key: MYSQL_ROOT_PASSWORD
         generateValue: true
