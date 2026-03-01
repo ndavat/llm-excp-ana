@@ -7,31 +7,35 @@ services:
       npm install
       cd frontend && npm install && npm run build
       cd ../backend && npm install && npm run build
-    startCommand: export DATABASE_URL=mysql://avnadmin:MYSQL_ROOT_PASSWORD@mysql-242268f-ndavat-051c.a.aivencloud.com:18638/defaultdb?ssl-mode=REQUIRED && cd backend && npm start
+    # startCommand is now just the execution, variables are handled below
+    startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3001
+      # Dynamically build the URL using the password from the private service
+      - key: DATABASE_URL
+        value: mysql://avnadmin:${MYSQL_ROOT_PASSWORD}@://mysql-242268f-ndavat-051c.a.aivencloud.com
       - key: MYSQL_ROOT_PASSWORD
         fromService:
           type: pserv
-          name: exception-db
+          name: defaultdb # Fixed: matched name to the pserv defined below
           envVarKey: MYSQL_ROOT_PASSWORD
       - key: OPENROUTER_API_KEY
-        sync: false
+        sync: false # You will be prompted to enter this in the Render Dashboard
       - key: OPENROUTER_MODEL
         value: openai/gpt-4o-mini
       - key: OPENROUTER_BASE_URL
-        value: https://openrouter.ai/api/v1
+        value: https://openrouter.ai
 
   - type: pserv
     name: defaultdb
     env: image
-    plan: starter
+    plan: starter # Note: Private Services require a paid plan on Render
     image: mysql:8.0
     envVars:
       - key: MYSQL_DATABASE
         value: defaultdb
       - key: MYSQL_ROOT_PASSWORD
-        generateValue: true
+        generateValue: true # Render will automatically create a secure password
