@@ -7,16 +7,17 @@ services:
       npm install
       cd frontend && npm install && npm run build
       cd ../backend && npm install && npm run build
-    startCommand: cd backend && npm start
+    startCommand: export DATABASE_URL=mysql://root:$MYSQL_ROOT_PASSWORD@exception-db:3306/exception_db && cd backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3001
-      - key: DATABASE_URL
-        fromDatabase:
+      - key: MYSQL_ROOT_PASSWORD
+        fromService:
+          type: pserv
           name: exception-db
-          property: connectionString
+          envVarKey: MYSQL_ROOT_PASSWORD
       - key: OPENROUTER_API_KEY
         sync: false
       - key: OPENROUTER_MODEL
@@ -24,8 +25,13 @@ services:
       - key: OPENROUTER_BASE_URL
         value: https://openrouter.ai/api/v1
 
-databases:
-  - name: exception-db
-    type: mysql
-    plan: free
-    region: oregon
+  - type: pserv
+    name: exception-db
+    env: docker
+    plan: starter
+    image: mysql:8.0
+    envVars:
+      - key: MYSQL_DATABASE
+        value: exception_db
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
